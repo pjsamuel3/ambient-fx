@@ -1,7 +1,7 @@
 {
   "name": "ambient-fx",
-  "version": "0.1.0",
-  "description": "Interactive aurora backgrounds: dot lattice and smooth gradient engines, Canvas 2D, zero dependencies.",
+  "version": "0.2.0",
+  "description": "Interactive ambient backgrounds: aurora dot lattice, smooth gradient, ripple grid, particle flow field, fluid simulation and noise waves. Canvas 2D, zero dependencies.",
   "type": "module",
   "license": "MIT",
   "main": "embed/ambient-fx.js",
@@ -9,6 +9,10 @@
     ".": "./embed/ambient-fx.js",
     "./aurora-particles": "./experiments/aurora-particles/aurora.js",
     "./flowing-gradient": "./experiments/flowing-gradient/gradient.js",
+    "./ripple-grid": "./experiments/ripple-grid/grid.js",
+    "./particle-field": "./experiments/particle-field/particles.js",
+    "./fluid-simulation": "./experiments/fluid-simulation/fluid.js",
+    "./noise-waves": "./experiments/noise-waves/waves.js",
     "./palettes": "./shared/rendering/palettes.js",
     "./ripples": "./shared/physics/ripples.js",
     "./noise": "./shared/noise/simplex.js"

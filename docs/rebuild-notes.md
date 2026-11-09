@@ -14,6 +14,9 @@ is ever lost and needs to be recreated.
    in `experiments/aurora-particles/aurora.js`.
 4. `04-theme-export-embed.md` → `theme`/`pair` on palettes, theme toggle + Settings JSON in
    `shared/ui/panel.js`, `embed/ambient-fx.js`, `embed/demo.html`, `package.json`.
+5. `05-remaining-experiments.md` → `experiments/{ripple-grid,particle-field,fluid-simulation,noise-waves}/`,
+   `shared/ui/page.{css,js}` (demo-page layout + palette→page glue shared by the new pages),
+   `spacingY` on `RipplePool`, engine registration in `embed/ambient-fx.js` / `package.json`.
 
 ## Repository conventions
 
@@ -65,12 +68,39 @@ is ever lost and needs to be recreated.
   (0–1.6×) sliders; `adjustPalette()` rotates each stop in HSL. The page background and
   text colours follow the palette's `bg` luminance.
 
+### The four later experiments
+
+- **Ripple Grid** integrates the 2-D wave equation (fixed 120 Hz step, `c` in
+  cells/step, partially absorbing edges) rather than reusing the analytic ripple
+  pool, because reflection and interference are the point of a "pool" look.
+  Vertices are drawn displaced by the height gradient (refraction). Line segments
+  are bucketed by (colour × alpha) into pre-baked style strings so the whole mesh
+  is ~200 `stroke()` calls.
+- **Particle Field** keeps trails by painting the background at `trailFade` alpha
+  each frame (dt-corrected) and drawing segments with `lighter` / `multiply`.
+  8-bit rounding leaves a faint residue on dark palettes; accepted as a nebula
+  glow. Ripples act on particles as acceleration sampled from a 24 px grid.
+- **Fluid Simulation** is Stam's stable fluids with one projection per frame,
+  vorticity confinement, and dye stored as density + premultiplied colour so two
+  dyes mix correctly. The pointer is handled directly (velocity direction is
+  needed, which `PointerRippler` does not provide). Idle motion comes from a
+  curl-noise potential sampled on a 3-cell stride and three drifting emitters.
+  The hero text has `user-select: none` because dragging is the main interaction.
+- **Noise Waves** draws each strand with a 20-stop `createLinearGradient` so
+  brightness varies along the line without splitting it into segments; fills
+  between neighbours give the silk look. `RipplePool` gained an optional
+  `spacingY` so its lattice can be samples × lines.
+
 ## Measured performance (Apple Silicon laptop, Chrome)
 
 | Experiment | Work per frame | Notes |
 |---|---|---|
 | aurora-particles, ~2,300 dots | ~2.4 ms | 7 noise samples per dot |
 | flowing-gradient, 24k cells | ~2.0 ms | 4 noise samples per cell; GPU does scale + blur |
+| ripple-grid, 51×29 | ~0.3 ms | wave step + 2 noise samples per vertex |
+| particle-field, 2,400 particles | ~0.75 ms | 3 noise samples per particle |
+| fluid-simulation, 144×78 cells | ~0.8 ms | 16 Jacobi iterations |
+| noise-waves, 28 × 147 points | ~0.7 ms | 4 noise samples per point, 56 gradients |
 
 ## Known gaps
 

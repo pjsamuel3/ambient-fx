@@ -14,6 +14,10 @@ python3 -m http.server 8080
 - Embed demo (an "existing site" using the library): <http://localhost:8080/embed/demo.html>
 - Aurora Particles: <http://localhost:8080/experiments/aurora-particles/>
 - Flowing Gradient: <http://localhost:8080/experiments/flowing-gradient/>
+- Ripple Grid: <http://localhost:8080/experiments/ripple-grid/>
+- Particle Field: <http://localhost:8080/experiments/particle-field/>
+- Fluid Simulation: <http://localhost:8080/experiments/fluid-simulation/>
+- Noise Waves: <http://localhost:8080/experiments/noise-waves/>
 
 ## Structure
 
@@ -21,18 +25,31 @@ python3 -m http.server 8080
 ambient-fx/
 ├── experiments/
 │   ├── aurora-particles/   # aurora bands through a dot lattice + pointer ripples (Canvas 2D)
-│   └── flowing-gradient/   # the same field as smooth pastel gradients
+│   ├── flowing-gradient/   # the same field as smooth pastel gradients
+│   ├── ripple-grid/        # wireframe lattice on a wave-equation water surface
+│   ├── particle-field/     # particles on a noise flow field with fading trails
+│   ├── fluid-simulation/   # stable-fluids solver rendered as palette dye
+│   └── noise-waves/        # stacked noise-displaced strands, a silky sheet
 ├── shared/
 │   ├── noise/              # simplex.js — 3D simplex noise
 │   ├── physics/            # ripples.js — damped travelling waves + pointer emitter
 │   ├── rendering/          # palettes.js — colour presets, hue/saturation, LUTs
-│   └── ui/                 # panel.js / panel.css — shared control panel
+│   └── ui/                 # panel.js / panel.css — shared control panel; page.js / page.css — demo-page glue
 ├── embed/                  # ambient-fx.js — mount() + <ambient-fx> element, demo.html
 ├── gallery/                # index of experiments
 └── docs/                   # original prompts + rebuild notes (see docs/README.md)
 ```
 
-Planned experiments: ripple-grid, particle-field, fluid-simulation, noise-waves.
+| Experiment | Engine | What it is |
+|---|---|---|
+| `aurora-particles` | `AuroraField` | Glowing dot lattice; aurora bands + travelling-wave ripples; optional continuous light layer. |
+| `flowing-gradient` | `GradientField` | The same aurora field as smooth pastel washes; ripples refract the colour. |
+| `ripple-grid` | `RippleGrid` | Wireframe lattice on a wave-equation water surface; waves interfere and reflect. |
+| `particle-field` | `ParticleField` | Free particles on a noise flow field with fading trails; ripples push a wake. |
+| `fluid-simulation` | `FluidField` | Stable-fluids solver on a coarse grid, rendered as palette dye you can stir. |
+| `noise-waves` | `NoiseWaves` | Stacked strands displaced by coherent noise; a silky sheet lifted by ripples. |
+
+Every engine exposes the same lifecycle (`start/stop/destroy/setPaused/setConfig/resetConfig/setPalette`), so the shared panel, Settings JSON and `embed/ambient-fx.js` work with all of them.
 
 All experiments share the palette presets in `shared/rendering/palettes.js` (Aurora, Northern Lights, Full Spectrum, Ember, Solar Flare, Glacier, and five pastel sets) and a hue-shift / saturation control, so the dot and gradient designs can be colour-matched.
 

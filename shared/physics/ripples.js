@@ -49,7 +49,8 @@ export class RipplePool {
   }
 
   /**
-   * @param {{cols:number, rows:number, spacing:number, x0:number, y0:number}} grid
+   * @param {{cols:number, rows:number, spacing:number, spacingY?:number, x0:number, y0:number}} grid
+   *        `spacingY` (optional) allows a non-square lattice; defaults to `spacing`.
    * @param {{speed:number, damping:number, wavelength:number, pulseWidth:number,
    *          maxDisplacement:number, spread?:number, energyScale?:number}} p
    * @param {number} clock      seconds
@@ -64,6 +65,7 @@ export class RipplePool {
     if (this.count === 0) return;
 
     const { cols, rows, spacing, x0, y0 } = grid;
+    const spacingY = grid.spacingY ?? spacing;
     const k = (Math.PI * 2) / p.wavelength;
     const w = p.pulseWidth;
     const invTwoW2 = 1 / (2 * w * w);
@@ -88,12 +90,12 @@ export class RipplePool {
 
       const c0 = Math.max(0, Math.floor((rx - reach - x0) / spacing));
       const c1 = Math.min(cols - 1, Math.ceil((rx + reach - x0) / spacing));
-      const r0 = Math.max(0, Math.floor((ry - reach - y0) / spacing));
-      const r1 = Math.min(rows - 1, Math.ceil((ry + reach - y0) / spacing));
+      const r0 = Math.max(0, Math.floor((ry - reach - y0) / spacingY));
+      const r1 = Math.min(rows - 1, Math.ceil((ry + reach - y0) / spacingY));
       if (c0 > c1 || r0 > r1) continue;
 
       for (let r = r0; r <= r1; r++) {
-        const py = y0 + r * spacing;
+        const py = y0 + r * spacingY;
         const dy = py - ry;
         let i = r * cols + c0;
         for (let c = c0; c <= c1; c++, i++) {

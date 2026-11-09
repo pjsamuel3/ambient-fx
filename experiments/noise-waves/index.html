@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Noise Waves — ambient-fx</title>
+  <link rel="stylesheet" href="../../shared/ui/page.css" />
+  <link rel="stylesheet" href="../../shared/ui/panel.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="light">
+  <div class="fx-bg" aria-hidden="true">
+    <canvas id="waves"></canvas>
+  </div>
+
+  <main class="hero">
+    <p class="eyebrow"><a href="../../gallery/">ambient-fx</a> / noise-waves · <a href="../particle-field/">particle field →</a></p>
+    <h1>Silk, slowly folding.</h1>
+    <p class="lede">Stacked strands displaced by coherent noise, gathering and glowing where the aurora passes. Move the pointer to lift the sheet; click to send a wave along it.</p>
+    <div class="actions">
+      <a class="btn primary" href="#" id="cta">Get started</a>
+      <a class="btn ghost" href="./README.md">How it works</a>
+    </div>
+  </main>
+
+  <aside class="panel light" id="panel" aria-label="Noise Waves configuration">
+    <header class="panel-head">
+      <button class="panel-toggle" aria-expanded="true" aria-controls="panel-body">
+        <span class="chev" aria-hidden="true"></span>
+        <span>Wave controls</span>
+      </button>
+      <span class="fps" title="Frames per second">— fps</span>
+    </header>
+    <div class="panel-body" id="panel-body">
+      <div class="controls"></div>
+      <div class="panel-actions">
+        <button class="btn small" data-action="pause">Pause</button>
+        <button class="btn small ghost" data-action="reset">Reset to defaults</button>
+      </div>
+    </div>
+  </aside>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

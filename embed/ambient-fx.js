@@ -11,6 +11,9 @@
  *   <ambient-fx src="./aurora-settings.json"></ambient-fx>
  *   <ambient-fx settings='{"engine":"flowing-gradient", ...}'></ambient-fx>
  *
+ * Engines: aurora-particles, flowing-gradient, ripple-grid, particle-field,
+ * fluid-simulation, noise-waves.
+ *
  * `settings` is the JSON produced by the "Settings JSON" box in each experiment's
  * control panel: { ambientFx: 1, engine, theme, palette: {name, hue, saturation, bg, stops}, config }.
  *
@@ -22,13 +25,21 @@
 
 import { AuroraField } from '../experiments/aurora-particles/aurora.js';
 import { GradientField } from '../experiments/flowing-gradient/gradient.js';
+import { RippleGrid } from '../experiments/ripple-grid/grid.js';
+import { ParticleField } from '../experiments/particle-field/particles.js';
+import { FluidField } from '../experiments/fluid-simulation/fluid.js';
+import { NoiseWaves } from '../experiments/noise-waves/waves.js';
 import { resolvePalette, PALETTES, adjustPalette, getPalette } from '../shared/rendering/palettes.js';
 
-export { AuroraField, GradientField, PALETTES, adjustPalette, getPalette, resolvePalette };
+export { AuroraField, GradientField, RippleGrid, ParticleField, FluidField, NoiseWaves, PALETTES, adjustPalette, getPalette, resolvePalette };
 
 const ENGINES = {
   'aurora-particles': AuroraField,
   'flowing-gradient': GradientField,
+  'ripple-grid': RippleGrid,
+  'particle-field': ParticleField,
+  'fluid-simulation': FluidField,
+  'noise-waves': NoiseWaves,
 };
 
 /**
