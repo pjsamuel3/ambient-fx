@@ -1,0 +1,24 @@
+{
+  "name": "ambient-fx",
+  "version": "0.1.0",
+  "description": "Interactive aurora backgrounds: dot lattice and smooth gradient engines, Canvas 2D, zero dependencies.",
+  "type": "module",
+  "license": "MIT",
+  "main": "embed/ambient-fx.js",
+  "exports": {
+    ".": "./embed/ambient-fx.js",
+    "./aurora-particles": "./experiments/aurora-particles/aurora.js",
+    "./flowing-gradient": "./experiments/flowing-gradient/gradient.js",
+    "./palettes": "./shared/rendering/palettes.js",
+    "./ripples": "./shared/physics/ripples.js",
+    "./noise": "./shared/noise/simplex.js"
+  },
+  "files": ["embed", "experiments", "shared", "docs", "README.md"],
+  "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "build": "esbuild embed/ambient-fx.js --bundle --minify --format=esm --outfile=dist/ambient-fx.esm.js && esbuild embed/ambient-fx.js --bundle --minify --format=iife --global-name=AmbientFx --outfile=dist/ambient-fx.iife.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

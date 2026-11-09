@@ -1,0 +1,99 @@
+:root {
+  --bg: #080b12;
+  --fg: #e6ecf7;
+  --muted: #8a97b3;
+  --accent: #39c9ed;
+  color-scheme: dark;
+}
+body.light {
+  --fg: #1e2130;
+  --muted: #5d6478;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background 0.4s, color 0.4s;
+}
+
+/* ---------- Background layer ---------- */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none; /* content above stays clickable; the engine listens on window */
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 70% 10%, rgba(23, 59, 117, 0.28), transparent 60%),
+    radial-gradient(90% 70% at 15% 90%, rgba(136, 100, 216, 0.12), transparent 60%),
+    var(--bg);
+}
+body.light .aurora-bg { background: var(--bg); }
+.aurora-bg canvas { display: block; width: 100%; height: 100%; }
+/* The engine inserts a low-res light-layer canvas before the dot canvas. */
+.aurora-bg canvas.aurora-light { position: absolute; }
+.aurora-bg canvas#aurora { position: relative; }
+
+/* ---------- Foreground ---------- */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  align-content: center;
+  gap: 1.1rem;
+  padding: clamp(1.5rem, 5vw, 5rem);
+  max-width: 48rem;
+}
+.eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.eyebrow a { color: inherit; text-decoration: none; opacity: 0.8; }
+.eyebrow a:hover { opacity: 1; text-decoration: underline; }
+h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.lede { margin: 0; max-width: 36rem; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.2rem); }
+.actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: rgba(127, 127, 127, 0.14);
+  color: var(--fg);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  font: inherit;
+}
+.btn:hover { background: rgba(127, 127, 127, 0.24); }
+.btn.primary { background: var(--accent); color: #06111a; }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.ghost { background: transparent; border-color: rgba(127, 127, 127, 0.35); }
+.btn.ghost:hover { border-color: rgba(127, 127, 127, 0.7); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, html, body { transition: none; }
+}

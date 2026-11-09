@@ -1,0 +1,171 @@
+/* Shared control-panel styles for ambient-fx experiments.
+   Pages set --panel-* tokens; defaults suit a dark background. */
+.panel {
+  --panel-bg: rgba(12, 17, 28, 0.78);
+  --panel-border: rgba(140, 170, 220, 0.14);
+  --panel-fg: #e6ecf7;
+  --panel-muted: #8a97b3;
+  --panel-accent: #39c9ed;
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  width: min(320px, calc(100vw - 2rem));
+  background: var(--panel-bg);
+  color: var(--panel-fg);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  font-size: 0.82rem;
+}
+.panel.light {
+  --panel-bg: rgba(255, 255, 255, 0.72);
+  --panel-border: rgba(40, 40, 60, 0.12);
+  --panel-fg: #1e2130;
+  --panel-muted: #6b7084;
+  --panel-accent: #7b5ce6;
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.8rem 0.55rem 0.6rem;
+}
+.panel-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 0;
+  color: var(--panel-fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+}
+.chev {
+  width: 0.5rem; height: 0.5rem;
+  border-right: 1.5px solid var(--panel-muted);
+  border-bottom: 1.5px solid var(--panel-muted);
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+  margin-top: -3px;
+}
+.panel.collapsed .chev { transform: rotate(-45deg); margin-top: 2px; }
+.fps { color: var(--panel-muted); font-variant-numeric: tabular-nums; font-size: 0.75rem; }
+.panel-body {
+  padding: 0.2rem 0.8rem 0.8rem;
+  border-top: 1px solid var(--panel-border);
+  max-height: min(62vh, 600px);
+  overflow-y: auto;
+}
+.panel.collapsed .panel-body { display: none; }
+
+.controls { display: grid; gap: 0.5rem; padding-top: 0.6rem; }
+.control-group {
+  margin: 0.2rem 0 0.1rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--panel-border);
+  color: var(--panel-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.control {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.2rem 0.6rem;
+}
+.control label { color: var(--panel-fg); }
+.control output {
+  color: var(--panel-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 3.2em;
+  text-align: right;
+}
+.control input[type="range"] {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: var(--panel-accent);
+  margin: 0;
+}
+.control select {
+  grid-column: 1 / -1;
+  width: 100%;
+  font: inherit;
+  color: var(--panel-fg);
+  background: rgba(127, 127, 127, 0.12);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+}
+.swatches {
+  grid-column: 1 / -1;
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.15rem;
+}
+.swatches span { flex: 1; }
+
+.panel-actions { display: flex; gap: 0.5rem; margin-top: 0.9rem; }
+.panel .btn.small {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: rgba(127, 127, 127, 0.16);
+  color: var(--panel-fg);
+  font-family: inherit;
+  cursor: pointer;
+}
+.panel .btn.small.ghost { background: transparent; border-color: var(--panel-border); }
+.panel .btn.small:hover { filter: brightness(1.15); }
+
+@media (max-width: 600px) {
+  .panel { right: 0.5rem; bottom: 0.5rem; left: 0.5rem; width: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chev { transition: none; }
+}
+
+/* ---- theme toggle + export/import ---- */
+.segmented {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.segmented button {
+  font: inherit;
+  padding: 0.35rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--panel-muted);
+  cursor: pointer;
+}
+.segmented button.active {
+  background: var(--panel-accent);
+  color: #fff;
+  font-weight: 600;
+}
+.panel.light .segmented button.active { color: #fff; }
+.control.io textarea {
+  grid-column: 1 / -1;
+  width: 100%;
+  resize: vertical;
+  font: 0.7rem/1.35 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--panel-fg);
+  background: rgba(127, 127, 127, 0.1);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 0.4rem 0.5rem;
+}
+.io-actions { grid-column: 1 / -1; display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.io-status { grid-column: 1 / -1; min-height: 1em; color: var(--panel-muted); font-size: 0.72rem; }
