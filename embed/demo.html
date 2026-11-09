@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Embed demo — an existing site</title>
+  <style>
+    /* A plain "existing" marketing page that knows nothing about ambient-fx. */
+    body { margin: 0; font: 16px/1.5 -apple-system, BlinkMacSystemFont, Inter, sans-serif; color: #1b1e2b; background: #fff; }
+    nav { display: flex; gap: 1.5rem; padding: 1rem 2rem; border-bottom: 1px solid #eee; }
+    nav a { color: inherit; text-decoration: none; font-weight: 500; }
+    .hero { min-height: 70vh; display: grid; place-content: center; text-align: center; padding: 4rem 1.5rem; color: #fff; }
+    .hero > * { position: relative; z-index: 1; }   /* content above the background layer */
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.6rem); margin: 0 0 .6rem; letter-spacing: -.02em; }
+    .hero p { margin: 0 auto 1.4rem; max-width: 36rem; opacity: .85; }
+    .hero button { font: inherit; padding: .8rem 1.4rem; border-radius: 999px; border: 0; background: #fff; color: #111; cursor: pointer; }
+    section { padding: 4rem 2rem; max-width: 60rem; margin: 0 auto; }
+    .band { min-height: 40vh; display: grid; place-content: center; text-align: center; }
+    .band > * { position: relative; z-index: 1; }
+    footer { padding: 2rem; color: #777; text-align: center; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <nav><a href="#">Product</a><a href="#">Pricing</a><a href="#">Docs</a></nav>
+
+  <!-- 1. Dots background in the hero, from a settings file exported by the panel. -->
+  <header class="hero">
+    <ambient-fx src="./hero-settings.json"></ambient-fx>
+    <h1>Your existing hero, now with weather.</h1>
+    <p>This page is plain HTML. The background was added with one tag and a JSON file exported from the experiment panel.</p>
+    <button id="hero-cta">Try it</button>
+  </header>
+
+  <section>
+    <h2>Normal content continues</h2>
+    <p>Nothing here is affected. Text selects, links click, layout is unchanged.</p>
+  </section>
+
+  <!-- 2. Pastel gradient band with inline settings. -->
+  <section class="band">
+    <ambient-fx settings='{"engine":"flowing-gradient","palette":{"name":"Dawn Pastel","hue":-20,"saturation":1.1},"config":{"auroraScale":700,"softness":18}}'></ambient-fx>
+    <h2>A second section, different engine</h2>
+    <p>Inline settings, pastel gradient, mounted into this section.</p>
+  </section>
+
+  <footer>© Example Inc.</footer>
+
+  <script type="module" src="./ambient-fx.js"></script>
+  <script>
+    document.getElementById('hero-cta').addEventListener('click', (e) => { e.target.textContent = 'Clicked ✓'; });
+  </script>
+</body>
+</html>

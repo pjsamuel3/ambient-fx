@@ -1,2 +1,75 @@
 # ambient-fx
 A collection of interactive backgrounds, generative animations and creative coding experiments using Canvas, WebGL and modern web technologies.
+
+## Run
+
+Everything is static ES modules with no build step. Serve the repo root:
+
+```bash
+python3 -m http.server 8080
+# or: npx serve .
+```
+
+- Gallery: <http://localhost:8080/gallery/>
+- Embed demo (an "existing site" using the library): <http://localhost:8080/embed/demo.html>
+- Aurora Particles: <http://localhost:8080/experiments/aurora-particles/>
+- Flowing Gradient: <http://localhost:8080/experiments/flowing-gradient/>
+
+## Structure
+
+```
+ambient-fx/
+├── experiments/
+│   ├── aurora-particles/   # aurora bands through a dot lattice + pointer ripples (Canvas 2D)
+│   └── flowing-gradient/   # the same field as smooth pastel gradients
+├── shared/
+│   ├── noise/              # simplex.js — 3D simplex noise
+│   ├── physics/            # ripples.js — damped travelling waves + pointer emitter
+│   ├── rendering/          # palettes.js — colour presets, hue/saturation, LUTs
+│   └── ui/                 # panel.js / panel.css — shared control panel
+├── embed/                  # ambient-fx.js — mount() + <ambient-fx> element, demo.html
+├── gallery/                # index of experiments
+└── docs/                   # original prompts + rebuild notes (see docs/README.md)
+```
+
+Planned experiments: ripple-grid, particle-field, fluid-simulation, noise-waves.
+
+All experiments share the palette presets in `shared/rendering/palettes.js` (Aurora, Northern Lights, Full Spectrum, Ember, Solar Flare, Glacier, and five pastel sets) and a hue-shift / saturation control, so the dot and gradient designs can be colour-matched.
+
+Each experiment keeps its engine (`*.js` class on a `<canvas>`) separate from its demo page so it can be dropped into React, Next.js or plain HTML.
+
+## Designing a look, then embedding it
+
+1. Open an experiment, pick a theme (Dark / Light) and palette, tune the sliders.
+2. In the panel's **Export / import** group, copy or download the **Settings JSON**.
+   It records the engine, theme, palette (preset + hue/saturation, plus the resolved
+   colours) and every slider that differs from the defaults. Paste JSON back and press
+   **Apply pasted** to restore a look.
+3. Embed it in any page. Copy the repository (or `npm i github:pjsamuel3/ambient-fx`),
+   then either:
+
+```html
+<script type="module" src="/vendor/ambient-fx/embed/ambient-fx.js"></script>
+
+<header class="hero">
+  <ambient-fx src="/hero-settings.json"></ambient-fx>   <!-- fills its parent -->
+  <h1 style="position:relative; z-index:1">Headline</h1>
+</header>
+```
+
+or from JavaScript / a framework:
+
+```js
+import { mount } from '/vendor/ambient-fx/embed/ambient-fx.js';
+import settings from './hero-settings.json' with { type: 'json' };
+
+const fx = mount(document.querySelector('.hero'), settings);
+// later: fx.setSettings(otherSettings); fx.destroy();
+```
+
+The layer is inserted as the parent's first child, absolutely positioned, `z-index: 0`
+and `pointer-events: none`; give your content `position: relative` so it stacks above.
+Pointer ripples keep working because the engines listen on `window`.
+`npm run build` (needs esbuild) produces single-file bundles in `dist/`.
+
+See `embed/demo.html` for a plain page using both engines.

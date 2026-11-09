@@ -1,0 +1,7 @@
+{
+  "ambientFx": 1,
+  "engine": "aurora-particles",
+  "theme": "dark",
+  "palette": { "name": "Northern Lights", "hue": 0, "saturation": 1 },
+  "config": { "dotOpacity": 0.5, "auroraGlow": 0.8, "auroraScale": 520 }
+}
