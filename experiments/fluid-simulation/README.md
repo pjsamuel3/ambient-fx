@@ -34,10 +34,17 @@ Each frame, on a `cols × rows` grid (`cellSize` px, capped at `maxCells`):
    advected together and dissipated (`dyeFade`); at render time
    `colourT = cd / d`, so colours blend correctly where dyes meet.
 
-Rendering writes `bg + (palette(colourT) − bg) · min(1, d · exposure)` into an
-`ImageData`, lifting toward white (dark palettes) or deepening (light) where the
-dye is over-exposed, then upscales with bilinear smoothing and a small CSS blur
-(`softness`). 144×78 cells cost ~0.8 ms/frame at 1440×780.
+Rendering, per cell, into an `ImageData`:
+
+- a faint **base wash** (`baseWash`): a slow ridged-noise aurora in palette colours
+  under the dye, so quiet areas have depth instead of flat background;
+- the **dye** with soft saturation `mix = 1 − e^(−1.8 · d · exposure)`, so thin
+  dye already reads as colour rather than a dark mix toward the background;
+- on dark palettes the ink is **luminous**: dense dye lifts toward a pastel of its
+  own hue (`glow`); on light palettes it deepens like watercolour (multiply).
+
+The buffer is then upscaled with bilinear smoothing and a small CSS blur
+(`softness`). 150×80 cells cost ~2 ms/frame at 1500×810.
 
 Velocity is stored in cells/s; pointer velocity is clamped to ±3000 px/s so a
 teleporting pointer cannot destabilise the solve.

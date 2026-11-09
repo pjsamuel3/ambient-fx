@@ -27,7 +27,9 @@ export const DEFAULTS = Object.freeze({
   vorticity: 0.3,           // vorticity confinement strength (crisper swirls)
   velocityDamping: 0.2,     // 1/s
   dyeFade: 0.45,            // 1/s dye dissipation
-  exposure: 1.2,            // dye → colour gain
+  exposure: 1.4,            // dye → colour gain
+  glow: 0.6,                // how far dense dye lifts toward a pastel of its colour
+  baseWash: 0.2,            // 0..1 faint slow aurora colour under the dye
 
   ambientFlow: 0.8,         // strength of the idle curl-noise stirring
   ambientScale: 700,        // px, size of the idle eddies
@@ -62,6 +64,7 @@ export class FluidField {
     this.image = null;
     this.cols = 0; this.rows = 0; this.W = 0; this.H = 0;
     this.u = this.v = this.u0 = this.v0 = this.d = this.d0 = this.cd = this.cd0 = this.p = this.div = this.curl = null;
+    this.washI = this.washT = null;
 
     this.pending = [];                 // pointer events queued for the next frame
     this.pointerPos = null;            // last pointer position (canvas px) and time
@@ -177,6 +180,7 @@ export class FluidField {
       this.d = new Float32Array(N); this.d0 = new Float32Array(N);
       this.cd = new Float32Array(N); this.cd0 = new Float32Array(N);
       this.p = new Float32Array(N); this.div = new Float32Array(N); this.curl = new Float32Array(N);
+      this.washI = new Float32Array(N); this.washT = new Float32Array(N);
       this.buffer.width = cols; this.buffer.height = rows;
       this.image = this.bctx.createImageData(cols, rows);
     }
@@ -269,37 +273,52 @@ export class FluidField {
   /** Idle stirring from a curl-noise potential, evaluated on a 3-cell stride. */
   _applyAmbient(dt) {
     const cfg = this.config;
-    if (cfg.ambientFlow <= 0 && cfg.ambientDye <= 0) return;
-    const { W, cols, rows, cell, u, v, noise } = this;
+    const { W, cols, rows, cell, u, v, noise, washI, washT } = this;
     const t = this.time;
     const s = 1 / cfg.ambientScale;
     const eps = cell * 1.5;
     // Force in cells/s² — scaled so the idle flow settles at a few cells per second.
     const gain = (cfg.ambientFlow * 2600 * dt) / cell;
-    for (let r = 1; r <= rows; r += 3) {
-      const py = (r - 0.5) * cell;
-      for (let c = 1; c <= cols; c += 3) {
-        const px = (c - 0.5) * cell;
-        const nx1 = noise.noise3((px + eps) * s, py * s, t * 0.05), nx0 = noise.noise3((px - eps) * s, py * s, t * 0.05);
-        const ny1 = noise.noise3(px * s, (py + eps) * s, t * 0.05), ny0 = noise.noise3(px * s, (py - eps) * s, t * 0.05);
-        const fx = (ny1 - ny0) / (2 * eps) * cfg.ambientScale;
-        const fy = -(nx1 - nx0) / (2 * eps) * cfg.ambientScale;
-        for (let rr = r; rr < Math.min(r + 3, rows + 1); rr++) {
-          let i = rr * W + c;
-          for (let cc = c; cc < Math.min(c + 3, cols + 1); cc++, i++) {
-            u[i] += fx * gain; v[i] += fy * gain;
+    const flow = cfg.ambientFlow > 0;
+    const wash = cfg.baseWash > 0;
+    if (flow || wash) {
+      for (let r = 1; r <= rows; r += 3) {
+        const py = (r - 0.5) * cell;
+        for (let c = 1; c <= cols; c += 3) {
+          const px = (c - 0.5) * cell;
+          let fx = 0, fy = 0, wi = 0, wt = 0.5;
+          if (flow) {
+            const nx1 = noise.noise3((px + eps) * s, py * s, t * 0.05), nx0 = noise.noise3((px - eps) * s, py * s, t * 0.05);
+            const ny1 = noise.noise3(px * s, (py + eps) * s, t * 0.05), ny0 = noise.noise3(px * s, (py - eps) * s, t * 0.05);
+            fx = (ny1 - ny0) / (2 * eps) * cfg.ambientScale * gain;
+            fy = -(nx1 - nx0) / (2 * eps) * cfg.ambientScale * gain;
+          }
+          if (wash) {
+            // Faint aurora under the dye: a soft ridged band + slow colour drift.
+            const n1 = noise.noise3(px * s * 0.6 + t * 0.02 + 300, py * s * 1.1, t * 0.03);
+            const ridge = 1 - Math.abs(n1);
+            wi = ridge * ridge * cfg.baseWash;
+            wt = clamp(0.5 + 0.5 * noise.noise3(px * s * 0.45 + 700, py * s * 0.45, t * 0.02), 0, 1);
+          }
+          for (let rr = r; rr < Math.min(r + 3, rows + 1); rr++) {
+            let i = rr * W + c;
+            for (let cc = c; cc < Math.min(c + 3, cols + 1); cc++, i++) {
+              u[i] += fx; v[i] += fy;
+              washI[i] = wi; washT[i] = wt;
+            }
           }
         }
       }
+    } else {
+      washI.fill(0);
     }
+    if (cfg.ambientDye <= 0) return;
     // Drifting emitters release dye with their own slowly changing tint.
-    if (cfg.ambientDye > 0) {
-      for (const e of this.emitters) {
-        const ex = (0.5 + 0.38 * noise.noise3(e.phase, 11.3, t * 0.045)) * this.width;
-        const ey = (0.5 + 0.38 * noise.noise3(e.phase + 5, 23.7, t * 0.04)) * this.height;
-        e.tint = clamp(0.5 + 0.5 * noise.noise3(e.phase + 9, 41.1, t * 0.03), 0, 1);
-        this._splat(ex, ey, 0, 0, cfg.ambientDye * 0.9 * dt * 3, e.tint, cfg.brushRadius * 1.2);
-      }
+    for (const e of this.emitters) {
+      const ex = (0.5 + 0.38 * noise.noise3(e.phase, 11.3, t * 0.045)) * this.width;
+      const ey = (0.5 + 0.38 * noise.noise3(e.phase + 5, 23.7, t * 0.04)) * this.height;
+      e.tint = clamp(0.5 + 0.5 * noise.noise3(e.phase + 9, 41.1, t * 0.03), 0, 1);
+      this._splat(ex, ey, 0, 0, cfg.ambientDye * 0.9 * dt * 3, e.tint, cfg.brushRadius * 1.2);
     }
   }
 
@@ -458,29 +477,49 @@ export class FluidField {
   // ----------------------------------------------------------------- render
 
   _render() {
-    const { W, cols, rows, d, cd, lut, bg, dark } = this;
+    const { W, cols, rows, d, cd, lut, bg, dark, washI, washT } = this;
     const cfg = this.config;
     const data = this.image.data;
     const exposure = cfg.exposure;
+    const glow = cfg.glow;
     const grain = cfg.grain * 255;
     let seed = (this.clock * 1000) | 0;
     let o = 0;
     for (let r = 1; r <= rows; r++) {
       for (let c = 1; c <= cols; c++, o += 4) {
         const i = r * W + c;
-        const dens = d[i];
         let cr = bg[0], cg = bg[1], cb = bg[2];
+
+        // Base: faint aurora wash so quiet areas have depth instead of flat background.
+        const wi = washI[i];
+        if (wi > 0.002) {
+          const wl = ((washT[i] * (LUT_SIZE - 1)) | 0) * 3;
+          const wm = dark ? wi * 0.55 : wi * 0.35;
+          cr += (lut[wl] - cr) * wm; cg += (lut[wl + 1] - cg) * wm; cb += (lut[wl + 2] - cb) * wm;
+        }
+
+        const dens = d[i];
         if (dens > 0.002) {
           const ct = clamp(cd[i] / dens, 0, 1);
           const li = ((ct * (LUT_SIZE - 1)) | 0) * 3;
+          const lr = lut[li], lg = lut[li + 1], lb = lut[li + 2];
           const e = dens * exposure;
-          const mix = e > 1 ? 1 : e;
-          cr += (lut[li] - cr) * mix; cg += (lut[li + 1] - cg) * mix; cb += (lut[li + 2] - cb) * mix;
-          if (e > 1) {
-            // Over-exposed dye: lift toward white (dark) or deepen (light).
-            const over = Math.min(1, (e - 1) * 0.35);
-            if (dark) { cr += (255 - cr) * over; cg += (255 - cg) * over; cb += (255 - cb) * over; }
-            else { cr *= 1 - over * 0.35; cg *= 1 - over * 0.35; cb *= 1 - over * 0.35; }
+          // Soft saturation: thin dye already reads as colour, never as mud.
+          const mix = 1 - Math.exp(-e * 1.8);
+          if (dark) {
+            // Luminous ink: blend toward the palette colour, then toward a pastel of it.
+            cr += (lr - cr) * mix; cg += (lg - cg) * mix; cb += (lb - cb) * mix;
+            const lift = clamp((e - 0.55) * 0.6, 0, 1) * glow;
+            if (lift > 0) {
+              const pr = lr * 0.45 + 255 * 0.55, pg = lg * 0.45 + 255 * 0.55, pb = lb * 0.45 + 255 * 0.55;
+              cr += (pr - cr) * lift; cg += (pg - cg) * lift; cb += (pb - cb) * lift;
+            }
+          } else {
+            // Watercolour on paper: multiply-like deepening toward the colour.
+            const mr = lr / 255, mg = lg / 255, mb = lb / 255;
+            cr *= 1 - (1 - mr) * mix; cg *= 1 - (1 - mg) * mix; cb *= 1 - (1 - mb) * mix;
+            const deep = clamp((e - 0.8) * 0.4, 0, 1) * glow * 0.5;
+            cr *= 1 - deep * 0.3; cg *= 1 - deep * 0.3; cb *= 1 - deep * 0.3;
           }
         }
         if (grain > 0) {
