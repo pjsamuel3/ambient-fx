@@ -1,7 +1,18 @@
 # ambient-fx
 A collection of interactive backgrounds, generative animations and creative coding experiments using Canvas, WebGL and modern web technologies.
 
-## Run
+**Live demo:** <https://pjsamuel3.github.io/ambient-fx/> (GitHub Pages, served from `main`)
+
+- Gallery: <https://pjsamuel3.github.io/ambient-fx/gallery/>
+- Embed demo: <https://pjsamuel3.github.io/ambient-fx/embed/demo.html>
+- Experiments: [Aurora Particles](https://pjsamuel3.github.io/ambient-fx/experiments/aurora-particles/) ·
+  [Flowing Gradient](https://pjsamuel3.github.io/ambient-fx/experiments/flowing-gradient/) ·
+  [Ripple Grid](https://pjsamuel3.github.io/ambient-fx/experiments/ripple-grid/) ·
+  [Particle Field](https://pjsamuel3.github.io/ambient-fx/experiments/particle-field/) ·
+  [Fluid Simulation](https://pjsamuel3.github.io/ambient-fx/experiments/fluid-simulation/) ·
+  [Noise Waves](https://pjsamuel3.github.io/ambient-fx/experiments/noise-waves/)
+
+## Run locally
 
 Everything is static ES modules with no build step. Serve the repo root:
 
@@ -39,7 +50,8 @@ ambient-fx/
 │   └── ui/                 # panel.js/.css — control panel; nav.js/.css — demo navigation; page.js/.css — page glue
 ├── embed/                  # ambient-fx.js — mount() + <ambient-fx> element, demo.html
 ├── gallery/                # index of experiments
-└── docs/                   # original prompts + rebuild notes (see docs/README.md)
+├── docs/                   # original prompts + rebuild notes (see docs/README.md)
+└── index.html              # redirects to gallery/ (GitHub Pages entry point)
 ```
 
 | Experiment | Engine | What it is |
