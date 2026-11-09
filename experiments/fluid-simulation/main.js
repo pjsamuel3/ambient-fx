@@ -2,8 +2,10 @@ import { FluidField, DEFAULTS } from './fluid.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { bindPage } from '../../shared/ui/page.js';
 import { mountNav } from '../../shared/ui/nav.js';
+import { mountDemoContent, bindScrollRipples } from '../../shared/ui/content.js';
 
 mountNav('fluid-simulation');
+mountDemoContent('fluid-simulation');
 
 const field = new FluidField(document.getElementById('fluid'), {});
 field.start();
@@ -35,3 +37,4 @@ buildPanel({
   panel, controls: CONTROLS, field, engine: 'fluid-simulation', defaults: DEFAULTS,
   initialPalette: 'Northern Lights', onPalette: bindPage(panel),
 });
+bindScrollRipples(field);

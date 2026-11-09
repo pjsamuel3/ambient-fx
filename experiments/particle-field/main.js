@@ -2,8 +2,10 @@ import { ParticleField, DEFAULTS } from './particles.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { bindPage } from '../../shared/ui/page.js';
 import { mountNav } from '../../shared/ui/nav.js';
+import { mountDemoContent, bindScrollRipples } from '../../shared/ui/content.js';
 
 mountNav('particle-field');
+mountDemoContent('particle-field');
 
 const field = new ParticleField(document.getElementById('particles'), {});
 field.start();
@@ -31,3 +33,4 @@ buildPanel({
   panel, controls: CONTROLS, field, engine: 'particle-field', defaults: DEFAULTS,
   initialPalette: 'Northern Lights', onPalette: bindPage(panel),
 });
+bindScrollRipples(field);

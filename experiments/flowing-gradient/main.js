@@ -2,8 +2,10 @@ import { GradientField, DEFAULTS } from './gradient.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { luminance } from '../../shared/rendering/palettes.js';
 import { mountNav } from '../../shared/ui/nav.js';
+import { mountDemoContent, bindScrollRipples } from '../../shared/ui/content.js';
 
 mountNav('flowing-gradient');
+mountDemoContent('flowing-gradient');
 
 const canvas = document.getElementById('gradient');
 const field = new GradientField(canvas, {});
@@ -50,3 +52,4 @@ document.getElementById('cta').addEventListener('click', (e) => {
   el.textContent = 'Clicked ✓';
   setTimeout(() => (el.textContent = 'Get started'), 1200);
 });
+bindScrollRipples(field);

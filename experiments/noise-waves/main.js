@@ -2,8 +2,10 @@ import { NoiseWaves, DEFAULTS } from './waves.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { bindPage } from '../../shared/ui/page.js';
 import { mountNav } from '../../shared/ui/nav.js';
+import { mountDemoContent, bindScrollRipples } from '../../shared/ui/content.js';
 
 mountNav('noise-waves');
+mountDemoContent('noise-waves');
 
 const field = new NoiseWaves(document.getElementById('waves'), {});
 field.start();
@@ -34,3 +36,4 @@ buildPanel({
   panel, controls: CONTROLS, field, engine: 'noise-waves', defaults: DEFAULTS,
   initialPalette: 'Dawn Pastel', onPalette: bindPage(panel),
 });
+bindScrollRipples(field);

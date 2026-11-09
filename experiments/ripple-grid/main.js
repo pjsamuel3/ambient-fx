@@ -2,8 +2,10 @@ import { RippleGrid, DEFAULTS } from './grid.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { bindPage } from '../../shared/ui/page.js';
 import { mountNav } from '../../shared/ui/nav.js';
+import { mountDemoContent, bindScrollRipples } from '../../shared/ui/content.js';
 
 mountNav('ripple-grid');
+mountDemoContent('ripple-grid');
 
 const field = new RippleGrid(document.getElementById('grid'), {});
 field.start();
@@ -32,3 +34,4 @@ buildPanel({
   panel, controls: CONTROLS, field, engine: 'ripple-grid', defaults: DEFAULTS,
   initialPalette: 'Aurora', onPalette: bindPage(panel),
 });
+bindScrollRipples(field);

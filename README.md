@@ -30,7 +30,7 @@ python3 -m http.server 8080
 - Fluid Simulation: <http://localhost:8080/experiments/fluid-simulation/>
 - Noise Waves: <http://localhost:8080/experiments/noise-waves/>
 
-Every demo has a navigation strip (top-left) with a link back to the gallery, previous / next arrows and a jump menu; `[` and `]` also step between demos.
+Every demo has a navigation strip (top-left) with a link back to the gallery, previous / next arrows and a jump menu; `[` and `]` also step between demos. Below each hero is a page of demo content (feature cards, long text, stats, links) so you can judge the background under real content and while scrolling, including on phones. Scrolling sends a gentle wave through the field.
 
 ## Structure
 
@@ -47,7 +47,7 @@ ambient-fx/
 │   ├── noise/              # simplex.js — 3D simplex noise
 │   ├── physics/            # ripples.js — damped travelling waves + pointer emitter
 │   ├── rendering/          # palettes.js — colour presets, hue/saturation, LUTs
-│   └── ui/                 # panel.js/.css — control panel; nav.js/.css — demo navigation; page.js/.css — page glue
+│   └── ui/                 # panel (controls), nav (demo navigation), content (scrollable demo sections), page (glue)
 ├── embed/                  # ambient-fx.js — mount() + <ambient-fx> element, demo.html
 ├── gallery/                # index of experiments
 ├── docs/                   # original prompts + rebuild notes (see docs/README.md)

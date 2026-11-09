@@ -6,8 +6,10 @@ import { AuroraField, DEFAULTS } from './aurora.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { luminance } from '../../shared/rendering/palettes.js';
 import { mountNav } from '../../shared/ui/nav.js';
+import { mountDemoContent, bindScrollRipples } from '../../shared/ui/content.js';
 
 mountNav('aurora-particles');
+mountDemoContent('aurora-particles');
 
 const canvas = document.getElementById('aurora');
 const field = new AuroraField(canvas, {
@@ -58,3 +60,4 @@ document.getElementById('cta').addEventListener('click', (e) => {
   el.textContent = 'Clicked ✓';
   setTimeout(() => (el.textContent = 'Get started'), 1200);
 });
+bindScrollRipples(field);
