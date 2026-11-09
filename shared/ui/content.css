@@ -33,8 +33,14 @@ body.light .demo-content {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+}
+/* Backdrop blur over a canvas animating at 60 fps is costly on phones; use it only on wide screens. */
+@media (min-width: 700px) {
+  .glass { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+}
+@media (max-width: 699.98px) {
+  .demo-content { --glass-bg: rgba(10, 14, 24, 0.62); }
+  body.light .demo-content { --glass-bg: rgba(255, 255, 255, 0.7); }
 }
 .feature-grid {
   display: grid;

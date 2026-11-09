@@ -27,7 +27,11 @@ html, body {
 /* ---------- Background layer ---------- */
 .aurora-bg {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh; /* stable while mobile toolbars collapse; see shared/ui/page.css */
   z-index: 0;
   pointer-events: none; /* content above stays clickable; the engine listens on window */
   overflow: hidden;
@@ -47,7 +51,7 @@ body.light .aurora-bg { background: var(--bg); }
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
   display: grid;
   align-content: center;
   gap: 1.1rem;

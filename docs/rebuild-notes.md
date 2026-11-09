@@ -98,6 +98,21 @@ is ever lost and needs to be recreated.
   between neighbours give the silk look. `RipplePool` gained an optional
   `spacingY` so its lattice can be samples × lines.
 
+### Mobile viewport stability
+
+iOS Safari (and Chrome on Android) resize the viewport as the toolbar collapses and
+expands during scrolling. A `position: fixed; inset: 0` background follows that, the
+ResizeObserver fires, and every engine reallocated its grid and wiped its state, so the
+effect visibly restarted on each scroll. Fixes, in layers:
+
+- The background layer is `height: 100lvh` (large viewport), which does not change while
+  toolbars collapse; the hero uses `100svh` so content never jumps.
+- `shared/rendering/resize.js` → `observeResize()` debounces size reports (120 ms) and
+  ignores ones where the rounded size is unchanged; engines size themselves once and pass
+  `skipFirst: true`.
+- Backdrop blur on the glass content cards is enabled only from 700 px up; phones get a
+  more opaque card instead, because blur over an animating canvas is expensive there.
+
 ## Measured performance (Apple Silicon laptop, Chrome)
 
 | Experiment | Work per frame | Notes |
