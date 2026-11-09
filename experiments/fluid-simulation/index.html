@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fluid Simulation — ambient-fx</title>
+  <link rel="stylesheet" href="../../shared/ui/page.css" />
+  <link rel="stylesheet" href="../../shared/ui/panel.css" />
+  <link rel="stylesheet" href="../../shared/ui/nav.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="dark">
+  <div class="fx-bg" aria-hidden="true">
+    <canvas id="fluid"></canvas>
+  </div>
+
+  <main class="hero">
+    <p class="eyebrow">ambient-fx / fluid-simulation</p>
+    <h1>Ink in slow water.</h1>
+    <p class="lede">A real incompressible fluid on a coarse grid. Drag through it to stir the dye, click to burst it outward, or just watch it fold over itself.</p>
+    <div class="actions">
+      <a class="btn primary" href="#" id="cta">Get started</a>
+      <a class="btn ghost" href="./README.md">How it works</a>
+    </div>
+  </main>
+
+  <aside class="panel" id="panel" aria-label="Fluid Simulation configuration">
+    <header class="panel-head">
+      <button class="panel-toggle" aria-expanded="true" aria-controls="panel-body">
+        <span class="chev" aria-hidden="true"></span>
+        <span>Fluid controls</span>
+      </button>
+      <span class="fps" title="Frames per second">— fps</span>
+    </header>
+    <div class="panel-body" id="panel-body">
+      <div class="controls"></div>
+      <div class="panel-actions">
+        <button class="btn small" data-action="pause">Pause</button>
+        <button class="btn small ghost" data-action="reset">Reset to defaults</button>
+      </div>
+    </div>
+  </aside>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

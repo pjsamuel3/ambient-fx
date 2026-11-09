@@ -1,0 +1,17 @@
+:root {
+  --bg: #080B12;
+  --fg: #e6ecf7;
+  --muted: #8a97b3;
+  --accent: #39c9ed;
+  color-scheme: dark;
+}
+body.light {
+  --fg: #1e2130;
+  --muted: #5d6478;
+  color-scheme: light;
+}
+body.dark {
+  --fg: #e6ecf7;
+  --muted: #8a97b3;
+  color-scheme: dark;
+}

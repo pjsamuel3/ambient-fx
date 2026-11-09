@@ -1,0 +1,20 @@
+:root {
+  --bg: #0B0A12;
+  --fg: #ece9f5;
+  --muted: #a7a3bb;
+  --accent: #FF6B1A;
+  color-scheme: dark;
+}
+body.light {
+  --fg: #1e2130;
+  --muted: #5d6478;
+  color-scheme: light;
+}
+body.dark {
+  --fg: #e6ecf7;
+  --muted: #8a97b3;
+  color-scheme: dark;
+}
+
+/* Dragging is the main interaction here; keep it from selecting the hero text. */
+.hero { user-select: none; -webkit-user-select: none; }
