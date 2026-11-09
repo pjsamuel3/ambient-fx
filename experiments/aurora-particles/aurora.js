@@ -22,6 +22,7 @@
 import { SimplexNoise } from '../../shared/noise/simplex.js';
 import { RipplePool, PointerRippler } from '../../shared/physics/ripples.js';
 import { PALETTES, buildLut, hexToRgb, luminance } from '../../shared/rendering/palettes.js';
+import { observeResize } from '../../shared/rendering/resize.js';
 
 export const DEFAULTS = Object.freeze({
   // Lattice
@@ -149,9 +150,10 @@ export class AuroraField {
 
     this.setPalette(palette || PALETTES[0]);
 
-    this.resizeObserver = new ResizeObserver(() => this.resize());
-    this.resizeObserver.observe(canvas.parentElement || canvas);
     this.resize();
+    // Later size reports are debounced and ignored unless the host really changed
+    // size (mobile toolbars collapsing during scroll must not reset the field).
+    this.resizeObserver = observeResize(canvas.parentElement || canvas, () => this.resize(), { skipFirst: true });
     this.applyOpacity();
   }
 

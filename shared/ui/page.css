@@ -15,7 +15,13 @@ html, body {
 
 .fx-bg {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Large-viewport height: does not change when a mobile browser's toolbar
+     collapses during scrolling, so the engines are never resized mid-scroll. */
+  height: 100vh;
+  height: 100lvh;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -32,8 +38,9 @@ html, body {
 .hero {
   position: relative;
   z-index: 1;
+  /* Small-viewport height: stable while the toolbar collapses, so the hero never jumps. */
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
   display: grid;
   align-content: center;
   gap: 1.1rem;
