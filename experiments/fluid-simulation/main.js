@@ -1,6 +1,9 @@
 import { FluidField, DEFAULTS } from './fluid.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { bindPage } from '../../shared/ui/page.js';
+import { mountNav } from '../../shared/ui/nav.js';
+
+mountNav('fluid-simulation');
 
 const field = new FluidField(document.getElementById('fluid'), {});
 field.start();

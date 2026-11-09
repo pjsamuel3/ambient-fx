@@ -5,6 +5,9 @@
 import { AuroraField, DEFAULTS } from './aurora.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { luminance } from '../../shared/rendering/palettes.js';
+import { mountNav } from '../../shared/ui/nav.js';
+
+mountNav('aurora-particles');
 
 const canvas = document.getElementById('aurora');
 const field = new AuroraField(canvas, {

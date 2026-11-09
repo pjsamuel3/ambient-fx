@@ -1,6 +1,9 @@
 import { RippleGrid, DEFAULTS } from './grid.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { bindPage } from '../../shared/ui/page.js';
+import { mountNav } from '../../shared/ui/nav.js';
+
+mountNav('ripple-grid');
 
 const field = new RippleGrid(document.getElementById('grid'), {});
 field.start();

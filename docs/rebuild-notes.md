@@ -17,6 +17,9 @@ is ever lost and needs to be recreated.
 5. `05-remaining-experiments.md` → `experiments/{ripple-grid,particle-field,fluid-simulation,noise-waves}/`,
    `shared/ui/page.{css,js}` (demo-page layout + palette→page glue shared by the new pages),
    `spacingY` on `RipplePool`, engine registration in `embed/ambient-fx.js` / `package.json`.
+   Follow-up: `shared/ui/nav.{js,css}` — a navigation strip mounted by every demo's `main.js`
+   (gallery link, prev/next in gallery order, jump select, `[` / `]` keys); `EXPERIMENTS` in
+   `nav.js` is the single ordered list of demos.
 
 ## Repository conventions
 

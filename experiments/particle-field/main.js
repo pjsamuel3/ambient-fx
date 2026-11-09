@@ -1,6 +1,9 @@
 import { ParticleField, DEFAULTS } from './particles.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { bindPage } from '../../shared/ui/page.js';
+import { mountNav } from '../../shared/ui/nav.js';
+
+mountNav('particle-field');
 
 const field = new ParticleField(document.getElementById('particles'), {});
 field.start();

@@ -1,6 +1,9 @@
 import { GradientField, DEFAULTS } from './gradient.js';
 import { buildPanel } from '../../shared/ui/panel.js';
 import { luminance } from '../../shared/rendering/palettes.js';
+import { mountNav } from '../../shared/ui/nav.js';
+
+mountNav('flowing-gradient');
 
 const canvas = document.getElementById('gradient');
 const field = new GradientField(canvas, {});
