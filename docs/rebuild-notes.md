@@ -20,6 +20,10 @@ is ever lost and needs to be recreated.
    Follow-up: `shared/ui/nav.{js,css}` — a navigation strip mounted by every demo's `main.js`
    (gallery link, prev/next in gallery order, jump select, `[` / `]` keys); `EXPERIMENTS` in
    `nav.js` is the single ordered list of demos.
+   Follow-up: `shared/ui/content.{js,css}` — `mountDemoContent(slug)` appends feature cards, a
+   long-form section, stats, links to the other demos and a footer after the hero so the
+   background can be judged under scrolling content on phones; `bindScrollRipples(field)` turns
+   scroll velocity into `addRipple()` impulses entering from the edge the content arrives from.
 
 ## Repository conventions
 
