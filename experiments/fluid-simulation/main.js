@@ -13,6 +13,8 @@ const CONTROLS = [
   { group: 'Grid', key: 'cellSize', label: 'Resolution (cell size)', min: 6,  max: 24,  step: 1,    unit: 'px' },
   { key: 'softness',     label: 'Softness (blur)',     min: 0,   max: 20,   step: 1,    unit: 'px' },
   { key: 'exposure',     label: 'Exposure',            min: 0.3, max: 3,    step: 0.05 },
+  { key: 'glow',         label: 'Ink glow',            min: 0,   max: 1.5,  step: 0.05 },
+  { key: 'baseWash',     label: 'Base aurora wash',    min: 0,   max: 1,    step: 0.05 },
   { key: 'grain',        label: 'Grain',               min: 0,   max: 0.15, step: 0.01 },
   { group: 'Fluid', key: 'pressureIterations', label: 'Pressure iterations', min: 4, max: 40, step: 1 },
   { key: 'vorticity',    label: 'Vorticity',           min: 0,   max: 1.5,  step: 0.05 },
@@ -31,5 +33,5 @@ const CONTROLS = [
 const panel = document.getElementById('panel');
 buildPanel({
   panel, controls: CONTROLS, field, engine: 'fluid-simulation', defaults: DEFAULTS,
-  initialPalette: 'Ember', onPalette: bindPage(panel),
+  initialPalette: 'Northern Lights', onPalette: bindPage(panel),
 });

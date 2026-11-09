@@ -1,8 +1,8 @@
 :root {
-  --bg: #0B0A12;
+  --bg: #06090F;
   --fg: #ece9f5;
   --muted: #a7a3bb;
-  --accent: #FF6B1A;
+  --accent: #3DF59A;
   color-scheme: dark;
 }
 body.light {
