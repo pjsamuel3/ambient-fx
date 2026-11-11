@@ -340,6 +340,9 @@ export class AuroraField {
 
   _onFrame(now) {
     this.rafId = requestAnimationFrame(this._onFrame);
+    // Optional frame cap (set by mount's maxFps): skip vsyncs that come too soon.
+    // The 2 ms slack keeps a 60 cap at 60 on displays whose vsync jitters.
+    if (this.maxFps > 0 && now - this.lastFrame < 1000 / this.maxFps - 2) return;
     let dt = (now - this.lastFrame) / 1000;
     this.lastFrame = now;
     if (dt > 1 / 20) dt = 1 / 20; // clamp after tab switches / hitches
