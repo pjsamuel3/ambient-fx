@@ -20,6 +20,9 @@ import { PALETTES, buildLut, hexToRgb, luminance } from '../../shared/rendering/
 import { observeResize } from '../../shared/rendering/resize.js';
 
 export const DEFAULTS = Object.freeze({
+  // Light palettes only: how far strokes deepen toward ink (1, the original
+  // look) versus keeping the palette's own colours (0, light on paper).
+  inkDepth: 1,
   lineCount: 28,
   sampleSpacing: 10,        // px between samples along a line
   amplitude: 70,            // px of vertical noise displacement
@@ -284,7 +287,7 @@ export class NoiseWaves {
       const a = clamp(b * alphaScale, 0, 1);
       // Dark palettes lift bright strands toward white; light ones deepen them toward ink.
       const lift = dark ? Math.max(0, b - 0.9) * 1.5 : 0;
-      const deep = dark ? 1 : 1 - Math.max(0, b - 0.45) * 0.45;
+      const deep = dark ? 1 : 1 - Math.max(0, b - 0.45) * 0.45 * this.config.inkDepth;
       const cr = Math.round((lut[li] + (255 - lut[li]) * lift) * deep);
       const cg = Math.round((lut[li + 1] + (255 - lut[li + 1]) * lift) * deep);
       const cb = Math.round((lut[li + 2] + (255 - lut[li + 2]) * lift) * deep);

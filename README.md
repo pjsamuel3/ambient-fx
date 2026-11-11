@@ -101,6 +101,16 @@ const fx = mount(document.querySelector('.hero'), settings);
 The layer is inserted as the parent's first child, absolutely positioned, `z-index: 0`
 and `pointer-events: none`; give your content `position: relative` so it stacks above.
 Pointer ripples keep working because the engines listen on `window`.
+### Light backgrounds
+
+On light palettes, aurora-particles and noise-waves deepen their strokes toward ink so the
+effect reads on paper. For a softer, brighter look with pale palettes, set `inkDepth`
+(0–1, default 1) in the settings' `config`: `0` keeps the palette's own colours.
+
+```js
+mount(target, { engine: 'noise-waves', palette, config: { inkDepth: 0 } });
+```
+
 `npm run build` (needs esbuild) produces single-file bundles in `dist/`.
 
 See `embed/demo.html` for a plain page using both engines.
