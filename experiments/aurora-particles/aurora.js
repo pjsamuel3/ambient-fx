@@ -25,6 +25,9 @@ import { PALETTES, buildLut, hexToRgb, luminance } from '../../shared/rendering/
 import { observeResize } from '../../shared/rendering/resize.js';
 
 export const DEFAULTS = Object.freeze({
+  // Light palettes only: how far strokes deepen toward ink (1, the original
+  // look) versus keeping the palette's own colours (0, light on paper).
+  inkDepth: 1,
   // Lattice
   gridSpacing: 28,          // px between particle homes
   baseRadius: 1.2,          // px
@@ -197,6 +200,7 @@ export class AuroraField {
     if (patch.opacity !== undefined || patch.auroraBlur !== undefined) this.applyOpacity();
     if (patch.seed !== undefined && patch.seed !== prev.seed) this.noise = new SimplexNoise(patch.seed);
     if (patch.rippleStrength !== undefined) this.pointer.strengthScale = patch.rippleStrength;
+    if (patch.inkDepth !== undefined && patch.inkDepth !== prev.inkDepth) this.setPalette(this.palette);
     if (this.reducedMotion) this._renderStatic();
   }
 
@@ -219,10 +223,19 @@ export class AuroraField {
     const grey = dark ? [150, 160, 185] : [70, 75, 95];
     this.restColour = [0, 1, 2].map((i) => base[i] * 0.45 + grey[i] * 0.55);
     this.restColour = this.restColour.map((v) => (dark ? Math.max(v, 90) : Math.min(v, 120)));
+    if (!dark) {
+      // inkDepth < 1 eases the lattice from slate grey toward a soft tint of
+      // the palette's middle stop, so pale palettes stay pale.
+      const k = Math.min(1, Math.max(0, this.config.inkDepth ?? 1));
+      const mid = hexToRgb(palette.stops[Math.floor(palette.stops.length / 2)]);
+      const soft = mid.map((v) => v * 0.88);
+      this.restColour = this.restColour.map((v, i) => soft[i] + (v - soft[i]) * k);
+    }
     // Ripple highlight: the brightest-looking stop of the palette.
     const li = Math.round(0.4 * (LUT_SIZE - 1)) * 3;
     this.rippleTint = [this.lut[li], this.lut[li + 1], this.lut[li + 2]];
     this.darkBg = dark;
+    this.airLift = dark ? 0 : (1 - Math.min(1, Math.max(0, this.config.inkDepth ?? 1))) * 0.45;
     // Additive light on dark grounds; multiplied tint on light ones.
     this.light.style.mixBlendMode = dark ? 'screen' : 'multiply';
     if (this.reducedMotion && this.running) this._renderStatic();
@@ -381,6 +394,7 @@ export class AuroraField {
     const drawLight = lightGain > 0.002;
     const lightData = this.lightImage.data;
     const darkBg = this.darkBg;
+    const airLift = this.airLift;
     const radiusRange = cfg.maxRadius - cfg.baseRadius;
     const opacityRange = cfg.maxOpacity - cfg.baseOpacity;
     const glow = cfg.glowIntensity;
@@ -457,6 +471,7 @@ export class AuroraField {
       let g = rest[1] + (lut[li + 1] - rest[1]) * mix;
       let b = rest[2] + (lut[li + 2] - rest[2]) * mix;
       r += (tint[0] - r) * ripMix; g += (tint[1] - g) * ripMix; b += (tint[2] - b) * ripMix;
+      if (airLift) { r += (255 - r) * airLift; g += (255 - g) * airLift; b += (255 - b) * airLift; }
 
       // --- Light layer pixel (same field, continuous) -----------------------
       if (drawLight) {
@@ -465,7 +480,8 @@ export class AuroraField {
         if (darkBg) {
           lightData[o] = lut[li] * L; lightData[o + 1] = lut[li + 1] * L; lightData[o + 2] = lut[li + 2] * L;
         } else {
-          const m = Math.min(1, L);
+          // The multiplied glow only darkens paper; soften it with the lift.
+          const m = Math.min(1, L) * (1 - airLift * 1.4);
           lightData[o] = 255 + (lut[li] - 255) * m;
           lightData[o + 1] = 255 + (lut[li + 1] - 255) * m;
           lightData[o + 2] = 255 + (lut[li + 2] - 255) * m;

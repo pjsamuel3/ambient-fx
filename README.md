@@ -126,6 +126,17 @@ Measured main-thread time with an effect in a 1440×900 hero (Chrome, Apple sili
 
 Before these defaults, an effect scrolled out of view cost the same as one on screen.
 
+### Light backgrounds
+
+On light palettes, aurora-particles, particle-field and noise-waves deepen toward ink
+(grey-mixed dots, darkened lines, multiplied trails) so the effect reads on paper. For a
+softer, brighter look, set `inkDepth` (0–1, default 1) in the settings' `config`. Toward 0
+the colours lift toward white and stop multiplying onto the page: light on paper.
+
+```js
+mount(target, { engine: 'noise-waves', palette, config: { inkDepth: 0 } });
+```
+
 `npm run build` (needs esbuild) produces single-file bundles in `dist/`.
 
 See `embed/demo.html` for a plain page using both engines.
