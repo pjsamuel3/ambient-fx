@@ -15,6 +15,9 @@ import { PALETTES, buildLut, hexToRgb, luminance } from '../../shared/rendering/
 import { observeResize } from '../../shared/rendering/resize.js';
 
 export const DEFAULTS = Object.freeze({
+  // Light palettes only: 1 deepens trails by multiplying onto the page (the
+  // original look); toward 0 trails are drawn lighter, as light on paper.
+  inkDepth: 1,
   particleCount: 2400,
   maxDensity: 0.0025,       // particles per px², caps the count on small viewports
   particleSize: 1.3,        // px line width of the trail
@@ -147,6 +150,7 @@ export class ParticleField {
       this.noise = new SimplexNoise(patch.seed); this.rand = mulberry32(patch.seed); this._allocate();
     }
     if (patch.pointerForce !== undefined) this.pointer.strengthScale = Math.sqrt(patch.pointerForce);
+    if (patch.inkDepth !== undefined && patch.inkDepth !== prev.inkDepth) { this.setPalette(this.palette); return; }
     this._bakeStyles();
     if (this.reducedMotion) this._renderStatic();
   }
@@ -158,6 +162,8 @@ export class ParticleField {
     this.lut = buildLut(palette.stops, LUT_SIZE);
     this.bg = hexToRgb(palette.bg);
     this.dark = luminance(palette.bg) < 0.5;
+    // inkDepth < 1 on light palettes: lift colours toward white (light on paper).
+    this.airLift = this.dark ? 0 : (1 - Math.min(1, Math.max(0, this.config.inkDepth ?? 1))) * 0.45;
     this._bakeStyles();
     this.needsClear = true;
     if (this.reducedMotion && this.running) this._renderStatic();
@@ -174,7 +180,7 @@ export class ParticleField {
       const li = Math.round((cb / (COLOUR_BUCKETS - 1)) * (LUT_SIZE - 1)) * 3;
       for (let ab = 0; ab < ALPHA_BUCKETS; ab++) {
         const a = (ab + 0.5) / ALPHA_BUCKETS;
-        const lift = this.dark ? Math.max(0, a - 0.6) * 0.9 : 0;
+        const lift = this.dark ? Math.max(0, a - 0.6) * 0.9 : this.airLift;
         const r = Math.round(lut[li] + (255 - lut[li]) * lift);
         const g = Math.round(lut[li + 1] + (255 - lut[li + 1]) * lift);
         const b = Math.round(lut[li + 2] + (255 - lut[li + 2]) * lift);
@@ -375,7 +381,7 @@ export class ParticleField {
       ctx.fillRect(0, 0, this.width, this.height);
     }
 
-    ctx.globalCompositeOperation = this.dark ? 'lighter' : 'multiply';
+    ctx.globalCompositeOperation = this.dark ? 'lighter' : this.airLift ? 'source-over' : 'multiply';
     ctx.lineWidth = cfg.particleSize;
     ctx.lineCap = 'round';
     const keys = COLOUR_BUCKETS * ALPHA_BUCKETS;

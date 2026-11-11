@@ -137,6 +137,7 @@ export class NoiseWaves {
     if (patch.opacity !== undefined) this.applyOpacity();
     if (patch.seed !== undefined && patch.seed !== prev.seed) this.noise = new SimplexNoise(patch.seed);
     if (patch.rippleStrength !== undefined) this.pointer.strengthScale = patch.rippleStrength;
+    if (patch.inkDepth !== undefined && patch.inkDepth !== prev.inkDepth) this.setPalette(this.palette);
     if (this.reducedMotion) this._renderStatic();
   }
 
@@ -147,6 +148,8 @@ export class NoiseWaves {
     this.lut = buildLut(palette.stops, LUT_SIZE);
     this.bg = hexToRgb(palette.bg);
     this.dark = luminance(palette.bg) < 0.5;
+    // inkDepth < 1 on light palettes: lift colours toward white (light on paper).
+    this.airLift = this.dark ? 0 : (1 - Math.min(1, Math.max(0, this.config.inkDepth ?? 1))) * 0.45;
     if (this.reducedMotion && this.running) this._renderStatic();
   }
 
@@ -286,7 +289,7 @@ export class NoiseWaves {
       const b = bright[i];
       const a = clamp(b * alphaScale, 0, 1);
       // Dark palettes lift bright strands toward white; light ones deepen them toward ink.
-      const lift = dark ? Math.max(0, b - 0.9) * 1.5 : 0;
+      const lift = dark ? Math.max(0, b - 0.9) * 1.5 : this.airLift;
       const deep = dark ? 1 : 1 - Math.max(0, b - 0.45) * 0.45 * this.config.inkDepth;
       const cr = Math.round((lut[li] + (255 - lut[li]) * lift) * deep);
       const cg = Math.round((lut[li + 1] + (255 - lut[li + 1]) * lift) * deep);
@@ -306,7 +309,7 @@ export class NoiseWaves {
 
     // Fills between neighbouring lines first (bottom to top), then the strands.
     if (cfg.fillOpacity > 0) {
-      ctx.globalCompositeOperation = this.dark ? 'lighter' : 'multiply';
+      ctx.globalCompositeOperation = this.dark ? 'lighter' : this.airLift ? 'source-over' : 'multiply';
       for (let r = 0; r < rows - 1; r++) {
         const a = r * cols, b = (r + 1) * cols;
         ctx.beginPath();

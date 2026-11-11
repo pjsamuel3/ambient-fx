@@ -103,9 +103,10 @@ and `pointer-events: none`; give your content `position: relative` so it stacks 
 Pointer ripples keep working because the engines listen on `window`.
 ### Light backgrounds
 
-On light palettes, aurora-particles and noise-waves deepen their strokes toward ink so the
-effect reads on paper. For a softer, brighter look with pale palettes, set `inkDepth`
-(0–1, default 1) in the settings' `config`: `0` keeps the palette's own colours.
+On light palettes, aurora-particles, particle-field and noise-waves deepen toward ink
+(grey-mixed dots, darkened lines, multiplied trails) so the effect reads on paper. For a
+softer, brighter look, set `inkDepth` (0–1, default 1) in the settings' `config`. Toward 0
+the colours lift toward white and stop multiplying onto the page: light on paper.
 
 ```js
 mount(target, { engine: 'noise-waves', palette, config: { inkDepth: 0 } });
